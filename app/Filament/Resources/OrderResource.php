@@ -14,15 +14,24 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-clock';
+
     protected static ?string $navigationLabel = 'Riwayat Order';
+
     protected static ?string $pluralModelLabel = 'Riwayat Order';
+
     protected static ?string $modelLabel = 'Riwayat Order';
+
     protected static ?int $navigationSort = 2; // Tampil di bawah POS
+
     protected static ?string $navigationGroup = 'Transaksi';
 
     public static function form(Form $form): Form
@@ -33,7 +42,7 @@ class OrderResource extends Resource
                     Forms\Components\Select::make('tipe_order')
                         ->label('Tipe Order')
                         ->options([
-                            'dine_in'   => 'Dine In (Makan di Tempat)',
+                            'dine_in' => 'Dine In (Makan di Tempat)',
                             'take_away' => 'Take Away (Bawa Pulang)',
                         ])
                         ->required()
@@ -50,18 +59,18 @@ class OrderResource extends Resource
                     Forms\Components\Select::make('metode_pembayaran')
                         ->label('Metode Pembayaran')
                         ->options([
-                            'cash'     => 'Tunai',
-                            'qris'     => 'QRIS',
+                            'cash' => 'Tunai',
+                            'qris' => 'QRIS',
                             'transfer' => 'Transfer Bank',
-                            'debit'    => 'Kartu Debit',
+                            'debit' => 'Kartu Debit',
                         ])
                         ->required(),
                     Forms\Components\Select::make('status')
                         ->label('Status')
                         ->options([
-                            'pending'   => 'Pending',
-                            'accepted'  => 'Diterima',
-                            'paid'      => 'Dibayar',
+                            'pending' => 'Pending',
+                            'accepted' => 'Diterima',
+                            'paid' => 'Dibayar',
                             'completed' => 'Selesai',
                         ])
                         ->required(),
@@ -118,9 +127,9 @@ class OrderResource extends Resource
                         ->label('Status')
                         ->badge()
                         ->color(fn ($state) => match ($state) {
-                            'pending'   => 'warning',
-                            'accepted'  => 'info',
-                            'paid'      => 'success',
+                            'pending' => 'warning',
+                            'accepted' => 'info',
+                            'paid' => 'success',
                             'completed' => 'gray',
                         }),
                     Infolists\Components\TextEntry::make('tipe_order')
@@ -137,7 +146,7 @@ class OrderResource extends Resource
                         ->formatStateUsing(fn ($state) => strtoupper($state ?? '-')),
                     Infolists\Components\TextEntry::make('total_harga')
                         ->label('Total')
-                        ->money('IDR')
+                        ->formatStateUsing(fn ($state) => 'Rp '.number_format($state, 0, ',', '.'))
                         ->weight('bold'),
                     Infolists\Components\TextEntry::make('created_at')
                         ->label('Waktu Order')
@@ -155,10 +164,10 @@ class OrderResource extends Resource
                                 ->label('Qty'),
                             Infolists\Components\TextEntry::make('harga')
                                 ->label('Harga Satuan')
-                                ->money('IDR'),
+                                ->formatStateUsing(fn ($state) => 'Rp '.number_format($state, 0, ',', '.')),
                             Infolists\Components\TextEntry::make('subtotal')
                                 ->label('Subtotal')
-                                ->money('IDR')
+                                ->formatStateUsing(fn ($state) => 'Rp '.number_format($state, 0, ',', '.'))
                                 ->weight('bold'),
                         ])->columns(4),
                 ]),
@@ -189,22 +198,22 @@ class OrderResource extends Resource
                     ->label('Status')
                     ->badge()
                     ->color(fn ($state) => match ($state) {
-                        'pending'   => 'warning',
-                        'accepted'  => 'info',
-                        'paid'      => 'success',
+                        'pending' => 'warning',
+                        'accepted' => 'info',
+                        'paid' => 'success',
                         'completed' => 'gray',
-                        default     => 'secondary',
+                        default => 'secondary',
                     })
                     ->formatStateUsing(fn ($state) => match ($state) {
-                        'pending'   => 'Menunggu',
-                        'accepted'  => 'Diterima',
-                        'paid'      => 'Dibayar',
+                        'pending' => 'Menunggu',
+                        'accepted' => 'Diterima',
+                        'paid' => 'Dibayar',
                         'completed' => 'Selesai',
-                        default     => $state,
+                        default => $state,
                     }),
                 Tables\Columns\TextColumn::make('total_harga')
                     ->label('Total')
-                    ->money('IDR')
+                    ->formatStateUsing(fn ($state) => 'Rp '.number_format($state, 0, ',', '.'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('metode_pembayaran')
                     ->label('Pembayaran')
@@ -219,15 +228,15 @@ class OrderResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([
-                        'pending'   => 'Menunggu',
-                        'accepted'  => 'Diterima',
-                        'paid'      => 'Dibayar',
+                        'pending' => 'Menunggu',
+                        'accepted' => 'Diterima',
+                        'paid' => 'Dibayar',
                         'completed' => 'Selesai',
                     ]),
                 Tables\Filters\SelectFilter::make('tipe_order')
                     ->label('Tipe Order')
                     ->options([
-                        'dine_in'   => 'Dine In',
+                        'dine_in' => 'Dine In',
                         'take_away' => 'Take Away',
                     ]),
                 Tables\Filters\Filter::make('created_at')
@@ -275,9 +284,13 @@ class OrderResource extends Resource
                     }),
                 Tables\Actions\EditAction::make(),
             ])
+            ->headerActions([
+                ExportAction::make(),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make(),
                 ]),
             ]);
     }
@@ -285,9 +298,9 @@ class OrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListOrders::route('/'),
-            'view'   => Pages\ViewOrder::route('/{record}'),
-            'edit'   => Pages\EditOrder::route('/{record}/edit'),
+            'index' => Pages\ListOrders::route('/'),
+            'view' => Pages\ViewOrder::route('/{record}'),
+            'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
 }
