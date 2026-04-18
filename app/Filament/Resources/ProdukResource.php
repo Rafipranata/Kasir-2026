@@ -11,15 +11,22 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 
 class ProdukResource extends Resource
 {
     protected static ?string $model = Produk::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+
     protected static ?string $navigationLabel = 'Produk';
+
     protected static ?string $pluralModelLabel = 'Produk';
+
     protected static ?string $modelLabel = 'Produk';
+
     protected static ?int $navigationSort = 3;
+
     protected static ?string $navigationGroup = 'Master Data';
 
     public static function form(Form $form): Form
@@ -55,15 +62,16 @@ class ProdukResource extends Resource
                     // Tampilkan preview gambar saat ini jika nilainya adalah URL eksternal
                     Forms\Components\Placeholder::make('preview_gambar_saat_ini')
                         ->label('Gambar Saat Ini')
-                        ->content(function ($record): \Illuminate\Support\HtmlString {
-                            if (!$record?->gambar_produk) {
-                                return new \Illuminate\Support\HtmlString('<span class="text-gray-400 text-sm">Belum ada gambar</span>');
+                        ->content(function ($record): HtmlString {
+                            if (! $record?->gambar_produk) {
+                                return new HtmlString('<span class="text-gray-400 text-sm">Belum ada gambar</span>');
                             }
                             $src = filter_var($record->gambar_produk, FILTER_VALIDATE_URL)
                                 ? $record->gambar_produk
-                                : \Illuminate\Support\Facades\Storage::disk('public')->url($record->gambar_produk);
-                            return new \Illuminate\Support\HtmlString(
-                                '<img src="' . e($src) . '" alt="Gambar Produk" style="height:150px;width:auto;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,0.1)">'
+                                : Storage::disk('public')->url($record->gambar_produk);
+
+                            return new HtmlString(
+                                '<img src="'.e($src).'" alt="Gambar Produk" style="height:150px;width:auto;border-radius:8px;object-fit:cover;border:1px solid rgba(255,255,255,0.1)">'
                             );
                         })
                         ->columnSpanFull()
@@ -80,7 +88,7 @@ class ProdukResource extends Resource
                         ->maxSize(2048)
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                         ->helperText('Format: JPG, PNG, WEBP. Maks 2MB. Kosongkan jika tidak ingin mengganti gambar.')
-        ->columnSpanFull(),
+                        ->columnSpanFull(),
                 ]),
         ]);
     }
@@ -89,6 +97,10 @@ class ProdukResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('#')
+                    ->sortable()
+                    ->width(60),
                 Tables\Columns\ImageColumn::make('gambar_produk')
                     ->label('Foto')
                     ->disk('public')
@@ -99,14 +111,11 @@ class ProdukResource extends Resource
                     ->url(fn ($record) => $record?->gambar_produk
                         ? (filter_var($record->gambar_produk, FILTER_VALIDATE_URL)
                             ? $record->gambar_produk
-                            : \Illuminate\Support\Facades\Storage::disk('public')->url($record->gambar_produk))
+                            : Storage::disk('public')->url($record->gambar_produk))
                         : null
                     )
                     ->defaultImageUrl(fn () => 'https://ui-avatars.com/api/?name=P&background=4f46e5&color=fff&size=60'),
-                Tables\Columns\TextColumn::make('id')
-                    ->label('#')
-                    ->sortable()
-                    ->width(60),
+
                 Tables\Columns\TextColumn::make('nama_produk')
                     ->label('Nama Produk')
                     ->searchable()
@@ -118,7 +127,7 @@ class ProdukResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('harga_produk')
                     ->label('Harga')
-                    ->money('IDR')
+                    ->formatStateUsing(fn ($state) => 'Rp '.number_format($state, 0, ',', '.'))
                     ->sortable(),
                 Tables\Columns\IconColumn::make('ketersediaan')
                     ->label('Tersedia')
@@ -156,9 +165,9 @@ class ProdukResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListProduks::route('/'),
+            'index' => Pages\ListProduks::route('/'),
             'create' => Pages\CreateProduk::route('/create'),
-            'edit'   => Pages\EditProduk::route('/{record}/edit'),
+            'edit' => Pages\EditProduk::route('/{record}/edit'),
         ];
     }
 }

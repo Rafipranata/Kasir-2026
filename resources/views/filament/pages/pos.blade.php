@@ -10,7 +10,7 @@
             </div>
 
             <!-- Grid Produk -->
-            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 @forelse($this->products as $produk)
                     <!-- Gunakan wire:click pada parent card dan style cursor-pointer -->
                     <div wire:click="addToCart({{ $produk->id }})"
@@ -41,7 +41,7 @@
                         </div>
                         <div class="p-3 flex flex-col flex-grow">
                             <span class="text-primary-600 dark:text-primary-400 font-semibold text-xs mb-1">
-                                IDR {{ number_format($produk->harga_produk, 2, ',', '.') }}
+                                IDR {{ number_format($produk->harga_produk, 0, ',', '.') }}
                             </span>
                             <h3
                                 class="font-bold text-gray-900 dark:text-white line-clamp-2 text-sm leading-tight flex-grow">
@@ -95,7 +95,7 @@
                     <div>
                         <label
                             class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Pembayaran</label>
-                        <select wire:model="metode_pembayaran"
+                        <select wire:model.live="metode_pembayaran"
                             class="w-full text-sm bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-lg">
                             <option value="cash">Tunai</option>
                             <option value="qris">QRIS</option>
@@ -104,6 +104,33 @@
                         </select>
                     </div>
                 </div>
+
+                @if($metode_pembayaran === 'cash')
+                <!-- Input Uang Pelanggan -->
+                <div class="mb-4" x-data="{ 
+                    raw: $wire.entangle('uang_pelanggan').live,
+                    formatted: ''
+                }" x-init="
+                    formatted = raw ? new Intl.NumberFormat('id-ID').format(raw) : '';
+                    $watch('raw', value => {
+                        if(!value) formatted = '';
+                    });
+                ">
+                    <label class="block text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">Uang Pelanggan</label>
+                    <div class="relative">
+                        {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-sm font-semibold">Rp</span> --}}
+                        <input type="text" 
+                            x-model="formatted"
+                            @input="
+                                let val = $event.target.value.replace(/[^0-9]/g, '');
+                                formatted = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                raw = val ? parseInt(val) : null;
+                            "
+                            placeholder="0"
+                            class="w-full pl-9 text-sm font-bold bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-lg focus:border-primary-500 focus:ring-primary-500">
+                    </div>
+                </div>
+                @endif
 
                 <!-- Daftar Item -->
                 <div
@@ -168,7 +195,7 @@
                     <div class="flex justify-between text-gray-500">
                         <span>Sub total</span>
                         <span class="font-medium text-gray-900 dark:text-gray-100">IDR
-                            {{ number_format($this->subtotal, 2, ',', '.') }}</span>
+                            {{ number_format($this->subtotal, 0, ',', '.') }}</span>
                     </div>
                 </div>
 
@@ -176,8 +203,16 @@
                     <div class="flex justify-between items-center text-lg font-bold">
                         <span>Total</span>
                         <span class="text-primary-600 dark:text-primary-400">IDR
-                            {{ number_format($this->total, 2, ',', '.') }}</span>
+                            {{ number_format($this->total, 0, ',', '.') }}</span>
                     </div>
+                    
+                    @if($metode_pembayaran === 'cash' && $uang_pelanggan)
+                    <div class="flex justify-between items-center text-sm mt-2 font-semibold border-t border-dashed border-gray-200 dark:border-gray-700 pt-2">
+                        <span class="text-gray-600 dark:text-gray-400">Kembalian</span>
+                        <span class="{{ $this->kembalian > 0 ? 'text-success-600 dark:text-success-400' : 'text-gray-600 dark:text-gray-400' }}">IDR
+                            {{ number_format($this->kembalian, 0, ',', '.') }}</span>
+                    </div>
+                    @endif
                 </div>
 
                 <!-- Tombol Proses -->

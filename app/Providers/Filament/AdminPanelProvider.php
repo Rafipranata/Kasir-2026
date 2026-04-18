@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->sidebarCollapsibleOnDesktop()
             ->brandName('Kasir POS 2026')
             ->colors([
                 'primary' => Color::Indigo,

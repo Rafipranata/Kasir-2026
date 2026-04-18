@@ -24,6 +24,7 @@ class Pos extends Page
     public $nama_pelanggan = '';
     public $metode_pembayaran = 'cash';
     public $tipe_order = 'dine_in';
+    public $uang_pelanggan = null;
 
     public function getCategoriesProperty()
     {
@@ -92,6 +93,7 @@ class Pos extends Page
     public function clearCart()
     {
         $this->cart = [];
+        $this->uang_pelanggan = null;
         unset($this->subtotal);
         unset($this->total);
     }
@@ -110,6 +112,15 @@ class Pos extends Page
         return $this->subtotal;
     }
 
+    #[\Livewire\Attributes\Computed]
+    public function kembalian()
+    {
+        if ($this->metode_pembayaran === 'cash' && $this->uang_pelanggan !== null) {
+            return max(0, (float)$this->uang_pelanggan - $this->total);
+        }
+        return 0;
+    }
+
     public function checkout()
     {
         if (empty($this->cart)) {
@@ -121,6 +132,13 @@ class Pos extends Page
             'tipe_order' => 'required',
             'metode_pembayaran' => 'required',
         ]);
+
+        if ($this->metode_pembayaran === 'cash') {
+            if (!$this->uang_pelanggan || $this->uang_pelanggan < $this->total) {
+                \Filament\Notifications\Notification::make()->title('Uang pelanggan tidak cukup!')->danger()->send();
+                return;
+            }
+        }
 
         $orderService = app(\App\Services\OrderService::class);
         $kodePesanan = $orderService->generateKodePesanan();
@@ -149,6 +167,7 @@ class Pos extends Page
         // Reset cart for next order instead of redirecting
         $this->clearCart();
         $this->nama_pelanggan = '';
+        $this->uang_pelanggan = null;
         
         \Filament\Notifications\Notification::make()->title('Pembayaran berhasil! Order selesai.')->success()->send();
     }
