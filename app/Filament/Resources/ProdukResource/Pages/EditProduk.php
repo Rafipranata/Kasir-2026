@@ -4,30 +4,8 @@ namespace App\Filament\Resources\ProdukResource\Pages;
 
 use App\Filament\Resources\ProdukResource;
 use Filament\Actions;
-use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Storage;
-
-class ListProduks extends ListRecords
-{
-    protected static string $resource = ProdukResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [Actions\CreateAction::make()];
-    }
-}
-
-class CreateProduk extends CreateRecord
-{
-    protected static string $resource = ProdukResource::class;
-
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
-    }
-}
 
 class EditProduk extends EditRecord
 {
@@ -83,4 +61,3 @@ class EditProduk extends EditRecord
         return $data;
     }
 }
-
