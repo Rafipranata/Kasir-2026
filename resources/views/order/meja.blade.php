@@ -1,3 +1,4 @@
+@use('Illuminate\Support\Facades\Storage')
 @extends('layout.app')
 
 @section('title', 'Pesanan Meja ' . $meja->nomor_meja)
@@ -5,33 +6,105 @@
 @section('content')
 <div x-data="cartApp()" class="pb-24 relative min-h-screen bg-gray-50">
     <!-- Header -->
-    <div class="bg-blue-600 text-white p-5 shadow-md sticky top-0 z-50 rounded-b-2xl">
-        <h1 class="text-2xl font-bold">Meja #{{ $meja->nomor_meja }}</h1>
-        <p class="text-sm text-blue-100 mt-1">Silakan pilih pesanan Anda</p>
+    <div class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100">
+        <div class="p-6 pb-2">
+            <div class="flex flex-col">
+                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-600 mb-1">Pesanan Aktif</span>
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Meja #{{ $meja->nomor_meja }}</h1>
+                    <div class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold border border-blue-100">
+                        Menu Digital
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="px-6 pb-4 space-y-4 mt-2">
+            {{-- Search Bar --}}
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <input type="text" 
+                       x-model="search"
+                       class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm" 
+                       placeholder="Cari menu favoritmu...">
+            </div>
+
+            {{-- Category Chips --}}
+            <div class="flex overflow-x-auto gap-2 no-scrollbar -mx-2 px-2 pb-1">
+                <button @click="activeCategory = 'all'"
+                        :class="activeCategory === 'all' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'"
+                        class="whitespace-nowrap px-5 py-2.5 rounded-xl text-xs font-bold transition-all border">
+                    Semua
+                </button>
+                @foreach($kategoris as $kategori)
+                <button @click="activeCategory = {{ $kategori->id }}"
+                        :class="activeCategory === {{ $kategori->id }} ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'"
+                        class="whitespace-nowrap px-5 py-2.5 rounded-xl text-xs font-bold transition-all border">
+                    {{ $kategori->nama_kategori }}
+                </button>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     <!-- Menu List -->
-    <div class="p-4 space-y-8">
+    <div class="p-4 space-y-10">
         @foreach($kategoris as $kategori)
             @if($kategori->produks->count() > 0)
-                <div class="space-y-4">
-                    <h2 class="text-xl font-bold text-gray-800 uppercase tracking-wide">{{ $kategori->nama_kategori }}</h2>
-                    <div class="grid gap-4">
+                <div x-show="showKategori({{ $kategori->id }}, {{ $kategori->produks->map(fn($p) => ['name' => $p->nama_produk])->toJson() }})" 
+                     x-transition.opacity
+                     class="space-y-4">
+                    <h2 class="text-lg font-black text-gray-900 uppercase tracking-widest pl-1">{{ $kategori->nama_kategori }}</h2>
+                    <div class="grid grid-cols-2 gap-4">
                         @foreach($kategori->produks as $produk)
-                            <div class="flex flex-col border border-gray-100 p-4 rounded-xl shadow-sm bg-white">
-                                <div class="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h3 class="font-semibold text-lg text-gray-800 leading-tight">{{ $produk->nama_produk }}</h3>
+                            @php
+                                $gambarUrl = null;
+                                if ($produk->gambar_produk) {
+                                    $gambarUrl = filter_var($produk->gambar_produk, FILTER_VALIDATE_URL)
+                                        ? $produk->gambar_produk
+                                        : Storage::disk('public')->url($produk->gambar_produk);
+                                }
+                            @endphp
+                            <div x-show="showProduk({{ $kategori->id }}, '{{ addslashes($produk->nama_produk) }}')"
+                                 x-transition.scale.95
+                                 class="flex flex-col border border-gray-100 rounded-[1.5rem] shadow-sm bg-white overflow-hidden transition-all hover:shadow-md hover:-translate-y-1">
+                                {{-- Product Image --}}
+                                <div class="relative w-full aspect-square bg-gray-100 overflow-hidden">
+                                    @if($gambarUrl)
+                                        <img src="{{ $gambarUrl }}" alt="{{ $produk->nama_produk }}" class="w-full h-full object-cover" loading="lazy">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                    @endif
+                                    {{-- Quantity Badge --}}
+                                    <div x-show="getQty({{ $produk->id }}) > 0" x-transition:enter="duration-300"
+                                         class="absolute top-3 right-3 bg-blue-600 text-white text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                                        <span x-text="getQty({{ $produk->id }})"></span>
                                     </div>
-                                    <p class="text-blue-600 font-bold whitespace-nowrap ml-2">{{ $produk->harga_formatted }}</p>
                                 </div>
-                                <div class="flex justify-end gap-3 mt-auto border-t border-gray-50 pt-3">
-                                    <button @click="decrement({{ $produk->id }})" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+
+                                {{-- Product Info --}}
+                                <div class="p-3.5 flex flex-col flex-1">
+                                    <h3 class="font-bold text-xs text-gray-800 leading-tight line-clamp-2 mb-2">{{ $produk->nama_produk }}</h3>
+                                    <p class="text-blue-600 font-black text-sm mt-auto">{{ $produk->harga_formatted }}</p>
+                                </div>
+
+                                {{-- Quantity Controls --}}
+                                <div class="flex items-center justify-between px-3 pb-4">
+                                    <button @click="decrement({{ $produk->id }})" class="w-8 h-8 rounded-xl bg-gray-50 text-gray-400 flex items-center justify-center hover:bg-gray-100 hover:text-gray-600 transition-colors active:scale-90 border border-gray-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"/></svg>
                                     </button>
-                                    <span x-text="getQty({{ $produk->id }})" class="w-8 text-center text-lg font-medium select-none">0</span>
-                                    <button @click="increment({{ $produk->id }}, '{{ $produk->nama_produk }}', {{ $produk->harga_produk }})" class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm hover:bg-blue-700 transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <span x-text="getQty({{ $produk->id }})" class="w-6 text-center text-xs font-black select-none text-gray-800">0</span>
+                                    <button @click="increment({{ $produk->id }}, '{{ addslashes($produk->nama_produk) }}', {{ $produk->harga_produk }})" class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-100 hover:bg-blue-700 transition-colors active:scale-90">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
                                     </button>
                                 </div>
                             </div>
@@ -156,8 +229,23 @@
             customerName: '',
             orderType: 'dine_in',
             paymentMethod: 'cash',
-            isSubmitting: false,
-            
+            search: '',
+            activeCategory: 'all',
+
+            showProduk(catId, name) {
+                const matchSearch = name.toLowerCase().includes(this.search.toLowerCase());
+                const matchCat = this.activeCategory === 'all' || this.activeCategory === catId;
+                return matchSearch && matchCat;
+            },
+
+            showKategori(catId, produks) {
+                const matchCat = this.activeCategory === 'all' || this.activeCategory === catId;
+                if (!matchCat) return false;
+                
+                if (this.search === '') return true;
+                return produks.some(p => p.name.toLowerCase().includes(this.search.toLowerCase()));
+            },
+
             get totalItems() {
                 return Object.values(this.cart).reduce((total, item) => total + item.qty, 0);
             },
