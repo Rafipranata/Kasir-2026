@@ -3,64 +3,86 @@
 @section('title', 'Pesanan Sukses - ' . $order->kode_pesanan)
 
 @section('content')
-<div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full text-center mb-6 border border-gray-100 relative overflow-hidden">
-        <!-- Decorative Header -->
-        <div class="bg-blue-600 h-2 absolute top-0 left-0 right-0"></div>
-        
-        <div class="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 shadow-sm shadow-green-200">
-            <svg class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
+<div class="min-h-screen bg-gray-50/50 flex flex-col items-center justify-center p-6">
+    <div class="w-full max-w-sm mt-8 mb-8">
+        <!-- Main Card -->
+        <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 w-full text-center mb-6 border border-gray-100/80">
+            
+            <!-- Animated Check Icon -->
+            <div class="mx-auto w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6 relative">
+                <div class="absolute inset-0 bg-green-100 rounded-full animate-ping opacity-30"></div>
+                <svg class="h-10 w-10 text-green-500 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Berhasil!</h2>
+            <p class="text-gray-500 text-sm mb-8">Terima kasih, <span class="text-gray-800 font-semibold">{{ $order->nama_pelanggan ?? 'Tamu' }}</span></p>
+            
+            <!-- Kode Pesanan Section -->
+            <div class="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Kode Pesanan</p>
+                <p class="text-3xl font-black text-gray-900 tracking-widest mb-3">{{ $order->kode_pesanan }}</p>
+                
+                @if($order->meja)
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-200 rounded-full shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                        <span class="text-[10px] font-bold text-gray-600 uppercase tracking-wide">Meja {{ $order->meja->nomor_meja }}</span>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Receipt/Summary -->
+            <div class="text-left">
+                <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">
+                    Ringkasan
+                </h4>
+                
+                <div class="space-y-3 mb-5 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                    @foreach($order->orderItems as $item)
+                        <div class="flex justify-between items-start text-sm">
+                            <div class="flex gap-2">
+                                <span class="font-semibold text-gray-900">{{ $item->qty }}x</span>
+                                <span class="text-gray-600">{{ $item->produk->nama_produk }}</span>
+                            </div>
+                            <span class="text-gray-900 font-medium whitespace-nowrap ml-4">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                        </div>
+                    @endforeach
+                </div>
+                
+                <div class="border-t border-gray-100 pt-4 mb-4">
+                    <div class="flex justify-between items-center mb-2 text-sm">
+                        <span class="text-gray-500">Metode</span>
+                        <span class="text-gray-800 font-semibold uppercase">{{ $order->metode_pembayaran }}</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-4 text-sm">
+                        <span class="text-gray-500">Tipe</span>
+                        <span class="text-gray-800 font-semibold">{{ $order->tipe_order_label }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <span class="text-sm font-semibold text-gray-500">Total</span>
+                        <span class="text-xl font-bold text-gray-900">{{ $order->total_harga_formatted }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Instructions -->
+            <div class="mt-6 text-amber-800 text-xs font-medium p-4 bg-amber-50 rounded-xl border border-amber-200/60 text-center flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <span>Tunjukkan <strong>Kode Pesanan</strong> ke kasir untuk proses pembayaran.</span>
+            </div>
         </div>
         
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">Pesanan Berhasil!</h2>
-        <p class="text-gray-500 text-sm mb-6">Terima kasih telah memesan, {{ $order->nama_pelanggan ?? 'Tamu' }}.</p>
-        
-        <div class="bg-gray-50 rounded-2xl p-5 mb-6 border border-gray-200 border-dashed">
-            <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Kode Pesanan</p>
-            <p class="text-3xl font-extrabold text-blue-600 tracking-widest">{{ $order->kode_pesanan }}</p>
+        <!-- Action Buttons -->
+        <div class="flex justify-center">
             @if($order->meja)
-                <p class="text-sm font-medium mt-2 bg-blue-100 text-blue-800 inline-block px-3 py-1 rounded-full">Meja #{{ $order->meja->nomor_meja }}</p>
+                <a href="{{ route('order.meja', $order->meja->id) }}" class="inline-flex items-center justify-center gap-2 text-gray-500 hover:text-gray-900 font-medium text-sm transition-colors py-2 px-4 rounded-full hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    Pesan Menu Lainnya
+                </a>
             @endif
         </div>
-
-        <div class="text-left mb-6">
-            <p class="text-sm font-medium text-gray-500 mb-2">Ringkasan Pesanan:</p>
-            <ul class="space-y-2 mb-4 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                @foreach($order->orderItems as $item)
-                    <li class="flex justify-between text-sm">
-                        <span class="text-gray-700"><span class="font-bold text-gray-900 mr-1">{{ $item->qty }}x</span> {{ $item->produk->nama_produk }}</span>
-                        <span class="text-gray-600 font-medium whitespace-nowrap ml-2">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
-                    </li>
-                @endforeach
-            </ul>
-            <div class="border-t border-gray-200 pt-3 flex justify-between font-bold">
-                <span class="text-gray-800">Total Pembayaran</span>
-                <span class="text-blue-600 text-lg">{{ $order->total_harga_formatted }}</span>
-            </div>
-            <div class="flex justify-between mt-1 text-sm font-medium">
-                <span class="text-gray-500">Metode</span>
-                <span class="text-gray-800">{{ strtoupper($order->metode_pembayaran) }}</span>
-            </div>
-            <div class="flex justify-between mt-1 text-sm font-medium">
-                <span class="text-gray-500">Tipe Order</span>
-                <span class="text-gray-800">{{ $order->tipe_order_label }}</span>
-            </div>
-        </div>
-
-        <div class="bg-blue-50 text-blue-800 text-sm p-4 rounded-xl mb-6">
-            Sampaikan <strong>Kode Pesanan</strong> ini kepada kasir untuk memproses pembayaran Anda.
-        </div>
-        
     </div>
-    
-    @if($order->meja)
-        <a href="{{ route('order.meja', $order->meja->id) }}" class="text-blue-600 font-medium text-sm hover:underline flex items-center gap-1 bg-white px-5 py-2.5 rounded-full shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-            Kembali ke Menu
-        </a>
-    @endif
 </div>
 
 <style>
@@ -69,8 +91,7 @@
   width: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1; 
-  border-radius: 10px;
+  background: transparent; 
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #cbd5e1; 

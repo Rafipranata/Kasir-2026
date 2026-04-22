@@ -9,10 +9,10 @@
     <div class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100">
         <div class="p-6 pb-2">
             <div class="flex flex-col">
-                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-600 mb-1">Pesanan Aktif</span>
+                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600 mb-1">Pesanan Aktif</span>
                 <div class="flex items-center justify-between">
                     <h1 class="text-2xl font-black text-gray-900 tracking-tight">Meja #{{ $meja->nomor_meja }}</h1>
-                    <div class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold border border-blue-100">
+                    <div class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-bold border border-indigo-100">
                         Menu Digital
                     </div>
                 </div>
@@ -24,26 +24,26 @@
             {{-- Search Bar --}}
             <div class="relative group">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
                 <input type="text" 
                        x-model="search"
-                       class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm" 
+                       class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all shadow-sm" 
                        placeholder="Cari menu favoritmu...">
             </div>
 
             {{-- Category Chips --}}
             <div class="flex overflow-x-auto gap-2 no-scrollbar -mx-2 px-2 pb-1">
                 <button @click="activeCategory = 'all'"
-                        :class="activeCategory === 'all' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'"
+                        :class="activeCategory === 'all' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'"
                         class="whitespace-nowrap px-5 py-2.5 rounded-xl text-xs font-bold transition-all border">
                     Semua
                 </button>
                 @foreach($kategoris as $kategori)
                 <button @click="activeCategory = {{ $kategori->id }}"
-                        :class="activeCategory === {{ $kategori->id }} ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'"
+                        :class="activeCategory === {{ $kategori->id }} ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'"
                         class="whitespace-nowrap px-5 py-2.5 rounded-xl text-xs font-bold transition-all border">
                     {{ $kategori->nama_kategori }}
                 </button>
@@ -78,15 +78,15 @@
                                     @if($gambarUrl)
                                         <img src="{{ $gambarUrl }}" alt="{{ $produk->nama_produk }}" class="w-full h-full object-cover" loading="lazy">
                                     @else
-                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-indigo-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
                                         </div>
                                     @endif
                                     {{-- Quantity Badge --}}
                                     <div x-show="getQty({{ $produk->id }}) > 0" x-transition:enter="duration-300"
-                                         class="absolute top-3 right-3 bg-blue-600 text-white text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                                         class="absolute top-3 right-3 bg-indigo-600 text-white text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
                                         <span x-text="getQty({{ $produk->id }})"></span>
                                     </div>
                                 </div>
@@ -94,7 +94,7 @@
                                 {{-- Product Info --}}
                                 <div class="p-3.5 flex flex-col flex-1">
                                     <h3 class="font-bold text-xs text-gray-800 leading-tight line-clamp-2 mb-2">{{ $produk->nama_produk }}</h3>
-                                    <p class="text-blue-600 font-black text-sm mt-auto">{{ $produk->harga_formatted }}</p>
+                                    <p class="text-indigo-600 font-black text-sm mt-auto">{{ $produk->harga_formatted }}</p>
                                 </div>
 
                                 {{-- Quantity Controls --}}
@@ -103,7 +103,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"/></svg>
                                     </button>
                                     <span x-text="getQty({{ $produk->id }})" class="w-6 text-center text-xs font-black select-none text-gray-800">0</span>
-                                    <button @click="increment({{ $produk->id }}, '{{ addslashes($produk->nama_produk) }}', {{ $produk->harga_produk }})" class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-100 hover:bg-blue-700 transition-colors active:scale-90">
+                                    <button @click="increment({{ $produk->id }}, '{{ addslashes($produk->nama_produk) }}', {{ $produk->harga_produk }})" class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-100 hover:bg-indigo-700 transition-colors active:scale-90">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
                                     </button>
                                 </div>
@@ -116,108 +116,168 @@
     </div>
 
     <!-- Cart Footer (Sticky) -->
-    <div x-show="totalItems > 0" x-transition.opacity
-         class="fixed bottom-0 w-full max-w-md bg-white border-t border-gray-100 p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-50 rounded-t-2xl">
-        <div class="flex justify-between items-center">
-            <div>
-                <p class="text-sm font-medium text-gray-500">Total (<span x-text="totalItems"></span> item)</p>
-                <p class="text-xl font-bold text-gray-900" x-text="formatRupiah(totalPrice)"></p>
+    <div x-show="totalItems > 0" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-10"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-10"
+         class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md bg-white/80 backdrop-blur-2xl border border-white/20 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-50 rounded-[2rem]">
+        <div class="flex justify-between items-center gap-4">
+            <div class="flex flex-col pl-2">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider leading-none mb-1">Total (<span x-text="totalItems"></span> Item)</p>
+                <p class="text-lg font-black text-gray-900 leading-none" x-text="formatRupiah(totalPrice)"></p>
             </div>
-            <button @click="openCheckoutModal = true" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg shadow-blue-200 transition-all active:scale-95 text-lg">
-                Pesan
+            <button @click="openCheckoutModal = true" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95 flex items-center gap-1.5 group">
+                <span>Lanjut</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
             </button>
         </div>
     </div>
 
     <!-- Checkout Modal -->
-    <div x-show="openCheckoutModal" style="display: none" class="fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-0 pb-0 text-center sm:block sm:p-0">
-            <div x-show="openCheckoutModal" x-transition.opacity class="fixed inset-0 bg-gray-900 bg-opacity-50 transition-opacity backdrop-blur-sm" @click="openCheckoutModal = false"></div>
+    <div x-show="openCheckoutModal" style="display: none" class="fixed inset-0 z-[60]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        {{-- Backdrop --}}
+        <div x-show="openCheckoutModal" 
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-gray-950/40 backdrop-blur-md transition-opacity" 
+             @click="openCheckoutModal = false"></div>
 
-            <div x-show="openCheckoutModal"
-                 x-transition:enter="ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-y-full"
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 x-transition:leave="ease-in duration-200"
-                 x-transition:leave-start="opacity-100 translate-y-0"
-                 x-transition:leave-end="opacity-0 translate-y-full"
-                 class="inline-block align-bottom bg-white rounded-t-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full absolute bottom-0 max-h-[90vh] flex flex-col">
-                 
-                <div class="bg-white px-5 pt-6 pb-4 overflow-y-auto flex-1 h-[70vh]">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-900" id="modal-title">Checkout Pesanan</h3>
-                        <button @click="openCheckoutModal = false" class="text-gray-400 hover:bg-gray-100 p-2 rounded-full transition-colors">
-                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                    </div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0">
+                <div x-show="openCheckoutModal"
+                     x-transition:enter="ease-out duration-500"
+                     x-transition:enter-start="opacity-0 translate-y-full"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="ease-in duration-300"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 translate-y-full"
+                     class="relative transform overflow-hidden rounded-t-[2.5rem] bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:rounded-[2.5rem] w-full max-h-[95vh] flex flex-col">
+                     
+                    {{-- Modal Handle for Mobile --}}
+                    <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2 sm:hidden"></div>
 
-                    <div class="space-y-6">
-                        <!-- Items Summary -->
-                        <div>
-                            <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 border-b pb-1">Ringkasan</h4>
-                            <div class="space-y-3 font-medium">
-                                <template x-for="item in Object.values(cart)" :key="item.id">
-                                    <div class="flex justify-between text-gray-800">
-                                        <span><span x-text="item.qty" class="text-blue-600 mr-2"></span><span x-text="item.name"></span></span>
-                                        <span x-text="formatRupiah(item.qty * item.price)"></span>
-                                    </div>
-                                </template>
-                                <div class="flex justify-between border-t border-gray-200 pt-3 text-lg font-bold">
-                                    <span>Total Pembayaran</span>
-                                    <span x-text="formatRupiah(totalPrice)" class="text-blue-600"></span>
-                                </div>
+                    <div class="px-6 py-6 overflow-y-auto custom-scrollbar flex-1">
+                        <div class="flex justify-between items-center mb-8">
+                            <div>
+                                <h3 class="text-2xl font-black text-gray-900 tracking-tight" id="modal-title">Konfirmasi Pesanan</h3>
+                                <p class="text-sm text-gray-500 font-medium mt-1">Periksa kembali detail pesanan Anda</p>
                             </div>
+                            <button @click="openCheckoutModal = false" class="w-10 h-10 flex items-center justify-center text-gray-400 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors">
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
                         </div>
-                        
-                        <!-- Form Data -->
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pemesan (opsional)</label>
-                                <input type="text" x-model="customerName" placeholder="Masukkan nama Anda" class="w-full border border-gray-300 rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
-                            </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Pesanan</label>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <label class="relative flex cursor-pointer rounded-xl border bg-white p-3 shadow-sm focus-within:ring-2 focus-within:ring-blue-500 hover:bg-gray-50 transition-all font-medium" :class="orderType === 'dine_in' ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'">
-                                        <input type="radio" x-model="orderType" value="dine_in" class="sr-only">
-                                        <span class="flex items-center text-sm w-full justify-center" :class="orderType === 'dine_in' ? 'text-blue-700' : 'text-gray-900'">🍽 Dine In</span>
-                                    </label>
-                                    <label class="relative flex cursor-pointer rounded-xl border bg-white p-3 shadow-sm focus-within:ring-2 focus-within:ring-blue-500 hover:bg-gray-50 transition-all font-medium" :class="orderType === 'take_away' ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'">
-                                        <input type="radio" x-model="orderType" value="take_away" class="sr-only">
-                                        <span class="flex items-center text-sm w-full justify-center" :class="orderType === 'take_away' ? 'text-blue-700' : 'text-gray-900'">👜 Take Away</span>
-                                    </label>
+                        <div class="space-y-8">
+                            <!-- Items Summary Card -->
+                            <div class="bg-gray-50/50 rounded-[2rem] p-6 border border-gray-100 shadow-inner">
+                                <h4 class="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                    Ringkasan Menu
+                                </h4>
+                                <div class="space-y-4">
+                                    <template x-for="item in Object.values(cart)" :key="item.id">
+                                        <div class="flex justify-between items-center group">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-xs font-black text-indigo-600 shadow-sm" x-text="item.qty"></div>
+                                                <span class="text-sm font-bold text-gray-800" x-text="item.name"></span>
+                                            </div>
+                                            <span class="text-sm font-black text-gray-900" x-text="formatRupiah(item.qty * item.price)"></span>
+                                        </div>
+                                    </template>
+                                    
+                                    <div class="pt-4 mt-4 border-t border-dashed border-gray-300">
+                                        <div class="flex justify-between items-end">
+                                            <span class="text-sm font-bold text-gray-500">Total Pembayaran</span>
+                                            <span x-text="formatRupiah(totalPrice)" class="text-2xl font-black text-indigo-600 tracking-tighter"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Metode Pembayaran</label>
-                                <select x-model="paymentMethod" class="w-full border border-gray-300 rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none appearance-none bg-white">
-                                    <option value="cash">Tunai di Kasir</option>
-                                    <option value="qris">QRIS</option>
-                                    <option value="transfer">Transfer Bank</option>
-                                </select>
+                            <!-- Form Inputs -->
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Nama Pemesan</label>
+                                    <div class="relative group">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                        </div>
+                                        <input type="text" x-model="customerName" placeholder="Tulis namamu disini..." class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-[1.25rem] text-sm font-bold placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white transition-all">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Tipe Pesanan</label>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <label class="relative flex cursor-pointer group">
+                                            <input type="radio" x-model="orderType" value="dine_in" class="sr-only">
+                                            <div class="w-full py-4 px-4 rounded-[1.25rem] border-2 flex flex-col items-center justify-center gap-2 transition-all"
+                                                 :class="orderType === 'dine_in' ? 'border-indigo-600 bg-indigo-50/50 shadow-lg shadow-indigo-100/50' : 'border-gray-100 bg-gray-50 hover:border-gray-200'">
+                                                <span class="text-2xl" :class="orderType === 'dine_in' ? 'scale-110' : 'grayscale opacity-50'">🍽️</span>
+                                                <span class="text-[10px] font-black uppercase tracking-wider" :class="orderType === 'dine_in' ? 'text-indigo-700' : 'text-gray-500'">Makan Sini</span>
+                                            </div>
+                                        </label>
+                                        <label class="relative flex cursor-pointer group">
+                                            <input type="radio" x-model="orderType" value="take_away" class="sr-only">
+                                            <div class="w-full py-4 px-4 rounded-[1.25rem] border-2 flex flex-col items-center justify-center gap-2 transition-all"
+                                                 :class="orderType === 'take_away' ? 'border-indigo-600 bg-indigo-50/50 shadow-lg shadow-indigo-100/50' : 'border-gray-100 bg-gray-50 hover:border-gray-200'">
+                                                <span class="text-2xl" :class="orderType === 'take_away' ? 'scale-110' : 'grayscale opacity-50'">🛍️</span>
+                                                <span class="text-[10px] font-black uppercase tracking-wider" :class="orderType === 'take_away' ? 'text-indigo-700' : 'text-gray-500'">Bungkus</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Metode Pembayaran</label>
+                                    <div class="relative">
+                                        <select x-model="paymentMethod" class="w-full appearance-none bg-gray-50 border border-transparent rounded-[1.25rem] py-4 pl-4 pr-12 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all">
+                                            <option value="cash">💵 Tunai di Kasir</option>
+                                            <option value="qris">📱 QRIS / E-Wallet</option>
+                                            <option value="transfer">🏦 Transfer Bank</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="bg-gray-50 px-5 py-4 border-t border-gray-200">
-                    <button @click="submitOrder()" :disabled="isSubmitting" class="w-full justify-center rounded-xl border border-transparent px-5 py-3.5 bg-blue-600 text-lg font-bold text-white hover:bg-blue-700 outline-none transition-all shadow-md shadow-blue-200 disabled:opacity-75 relative">
-                        <span x-show="!isSubmitting">Kirim Pesanan Sekarang</span>
-                        <span x-show="isSubmitting" class="flex justify-center items-center">
-                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            Memproses...
-                        </span>
-                    </button>
-                    <p class="text-center text-xs text-gray-500 mt-3 flex items-center justify-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z" /></svg>
-                        Transaksi Aman & Terenkripsi
-                    </p>
+                    
+                    <div class="p-6 bg-white border-t border-gray-100">
+                        <button @click="submitOrder()" 
+                                :disabled="isSubmitting" 
+                                class="w-full h-16 rounded-[1.5rem] bg-indigo-600 text-white font-black text-lg shadow-2xl shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-[0.98] disabled:opacity-50 disabled:grayscale relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                            <span x-show="!isSubmitting" class="flex items-center justify-center gap-3">
+                                <span>Pesan Sekarang</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                            </span>
+                            <span x-show="isSubmitting" class="flex justify-center items-center gap-3">
+                                <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <span>Memproses...</span>
+                            </span>
+                        </button>
+                        <div class="flex items-center justify-center gap-2 mt-4 opacity-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z" /></svg>
+                            <span class="text-[10px] font-bold uppercase tracking-widest">Aman & Terenkripsi</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 
 @push('scripts')
@@ -231,6 +291,7 @@
             paymentMethod: 'cash',
             search: '',
             activeCategory: 'all',
+            isSubmitting: false,
 
             showProduk(catId, name) {
                 const matchSearch = name.toLowerCase().includes(this.search.toLowerCase());
