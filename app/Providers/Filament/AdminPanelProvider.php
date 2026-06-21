@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Widgets\PemasukanHarian;
 use App\Filament\Widgets\PenjualanHarian;
+use App\Services\SettingService;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -25,15 +26,28 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        // Ambil setting dari database. Jika tabel belum ada (fresh install),
+        // gunakan nilai default agar panel tetap bisa dimuat.
+        try {
+            /** @var SettingService $svc */
+            $svc = app(SettingService::class);
+
+            $brandName    = $svc->get('brand_name', 'Filament POS');
+            $primaryColor = $svc->resolveColor($svc->get('primary_color', 'indigo'));
+        } catch (\Throwable) {
+            $brandName    = 'Filament POS';
+            $primaryColor = Color::Indigo;
+        }
+
         return $panel
             ->default()
             ->id('admin')
             ->path('admin')
             ->login()
             ->sidebarCollapsibleOnDesktop()
-            ->brandName('Kasir POS 2026')
+            ->brandName($brandName)
             ->colors([
-                'primary' => Color::Indigo,
+                'primary' => $primaryColor,
                 'gray'    => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

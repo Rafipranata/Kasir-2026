@@ -1,0 +1,18 @@
+<x-filament-panels::page>
+    {{-- SettingsPage — Pengaturan Aplikasi --}}
+    <form wire:submit="save">
+        {{ $this->form }}
+
+        <div class="mt-6 flex justify-end">
+            <x-filament::button
+                type="submit"
+                icon="heroicon-o-check-circle"
+                size="lg"
+            >
+                Simpan Pengaturan
+            </x-filament::button>
+        </div>
+    </form>
+
+    <x-filament-actions::modals />
+</x-filament-panels::page>

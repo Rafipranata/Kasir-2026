@@ -224,4 +224,127 @@
             </div>
         </div>
     </div>
+    <div
+    x-data="{
+        open: false,
+        orderId: null,
+        uangBayar: 0,
+        streamUrl: '',
+        downloadUrl: '',
+
+        init() {
+            /* Dengarkan event dari Livewire */
+            $wire.on('open-receipt-modal', ({ orderId, uangBayar }) => {
+                this.orderId     = orderId;
+                this.uangBayar   = uangBayar;
+                this.streamUrl   = '/receipt/' + orderId + '/stream';
+                this.downloadUrl = '/receipt/' + orderId + '/download';
+                this.open        = true;
+            });
+        },
+
+        printReceipt() {
+            const iframe = document.getElementById('receipt-iframe');
+            if (iframe) {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            }
+        },
+
+        close() {
+            this.open = false;
+            @this.closeReceiptModal();
+        }
+    }"
+    x-show="open"
+    x-cloak
+    style="display:none;"
+    class="fixed inset-0 z-[9999] flex items-center justify-center"
+>
+    {{-- Backdrop --}}
+    <div
+        class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        @click="close()"
+    ></div>
+
+    {{-- Modal Box --}}
+    <div
+        x-show="open"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden"
+        style="max-height: 92vh;"
+    >
+        {{-- Header Modal --}}
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185z" />
+                </svg>
+                <h3 class="text-base font-bold text-gray-900 dark:text-white">Struk Pembayaran</h3>
+            </div>
+            <button @click="close()" class="p-1.5 rounded-lg text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        {{-- PDF Preview --}}
+        <div class="bg-gray-100 dark:bg-gray-950" style="height: 55vh;">
+            <iframe
+                id="receipt-iframe"
+                :src="streamUrl"
+                class="w-full h-full border-0"
+                title="Struk Pembayaran"
+            ></iframe>
+        </div>
+
+        {{-- Action Buttons --}}
+        <div class="flex gap-3 p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+            {{-- Print --}}
+            <button
+                @click="printReceipt()"
+                class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-semibold text-sm transition-all shadow hover:shadow-md active:scale-95"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
+                </svg>
+                Print
+            </button>
+
+            {{-- Download --}}
+            <a
+                :href="downloadUrl"
+                target="_blank"
+                class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-success-600 hover:bg-success-500 text-white font-semibold text-sm transition-all shadow hover:shadow-md active:scale-95"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Download
+            </a>
+
+            {{-- Close --}}
+            <button
+                @click="close()"
+                class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold text-sm transition-all active:scale-95"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
 </x-filament-panels::page>
+
+{{-- ═══════════════════════════════════════════════════════════
+     MODAL STRUK — muncul otomatis setelah checkout berhasil
+═══════════════════════════════════════════════════════════ --}}
+

@@ -252,6 +252,12 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('struk')
+                    ->label('Struk')
+                    ->icon('heroicon-o-receipt-percent')
+                    ->color('info')
+                    ->url(fn (Order $record): string => route('receipt.stream', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\Action::make('accept')
                     ->label('Accept')
                     ->icon('heroicon-o-check')

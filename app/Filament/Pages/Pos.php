@@ -26,6 +26,12 @@ class Pos extends Page
     public $tipe_order = 'dine_in';
     public $uang_pelanggan = null;
 
+    /** ID order terakhir yang berhasil dibuat — dipakai modal struk */
+    public ?int $lastOrderId = null;
+
+    /** Kontrol visibilitas modal struk */
+    public bool $showReceiptModal = false;
+
     public function getCategoriesProperty()
     {
         return \App\Models\Kategori::all();
@@ -57,10 +63,10 @@ class Pos extends Page
             $this->cart[$productId]['qty']++;
         } else {
             $this->cart[$productId] = [
-                'id' => $produk->id,
-                'nama' => $produk->nama_produk,
+                'id'    => $produk->id,
+                'nama'  => $produk->nama_produk,
                 'harga' => $produk->harga_produk,
-                'qty' => 1,
+                'qty'   => 1,
             ];
         }
     }
@@ -82,7 +88,7 @@ class Pos extends Page
             }
         }
     }
-    
+
     public function removeProduct($productId)
     {
         if (isset($this->cart[$productId])) {
@@ -129,8 +135,8 @@ class Pos extends Page
         }
 
         $this->validate([
-            'tipe_order' => 'required',
-            'metode_pembayaran' => 'required',
+            'tipe_order'         => 'required',
+            'metode_pembayaran'  => 'required',
         ]);
 
         if ($this->metode_pembayaran === 'cash') {
@@ -141,34 +147,58 @@ class Pos extends Page
         }
 
         $orderService = app(\App\Services\OrderService::class);
-        $kodePesanan = $orderService->generateKodePesanan();
+        $kodePesanan  = $orderService->generateKodePesanan();
 
-        DB::transaction(function () use ($kodePesanan) {
+        $newOrderId = null;
+
+        DB::transaction(function () use ($kodePesanan, &$newOrderId) {
             $order = Order::create([
-                'kode_pesanan' => $kodePesanan,
-                'tipe_order' => $this->tipe_order,
-                'nama_pelanggan' => $this->nama_pelanggan,
-                'metode_pembayaran' => $this->metode_pembayaran,
-                'status' => 'completed',
-                'total_harga' => $this->total,
+                'kode_pesanan'       => $kodePesanan,
+                'tipe_order'         => $this->tipe_order,
+                'nama_pelanggan'     => $this->nama_pelanggan,
+                'metode_pembayaran'  => $this->metode_pembayaran,
+                'status'             => 'completed',
+                'total_harga'        => $this->total,
             ]);
 
             foreach ($this->cart as $item) {
                 OrderItem::create([
-                    'order_id' => $order->id,
+                    'order_id'  => $order->id,
                     'produk_id' => $item['id'],
-                    'qty' => $item['qty'],
-                    'harga' => $item['harga'],
-                    'subtotal' => $item['qty'] * $item['harga'],
+                    'qty'       => $item['qty'],
+                    'harga'     => $item['harga'],
+                    'subtotal'  => $item['qty'] * $item['harga'],
                 ]);
             }
+
+            $newOrderId = $order->id;
         });
 
-        // Reset cart for next order instead of redirecting
+        // Simpan uang_pelanggan sebelum reset untuk ditampilkan di struk
+        $uangBayar = (float) ($this->uang_pelanggan ?? 0);
+
+        // Reset cart sebelum tampilkan modal
         $this->clearCart();
         $this->nama_pelanggan = '';
         $this->uang_pelanggan = null;
-        
-        \Filament\Notifications\Notification::make()->title('Pembayaran berhasil! Order selesai.')->success()->send();
+
+        // Set state modal struk
+        $this->lastOrderId      = $newOrderId;
+        $this->showReceiptModal = true;
+
+        // Dispatch event Alpine.js agar modal muncul otomatis
+        $this->dispatch('open-receipt-modal', orderId: $newOrderId, uangBayar: $uangBayar);
+
+        \Filament\Notifications\Notification::make()
+            ->title('Pembayaran berhasil! Order selesai.')
+            ->success()
+            ->send();
+    }
+
+    /** Tutup modal struk */
+    public function closeReceiptModal(): void
+    {
+        $this->showReceiptModal = false;
+        $this->lastOrderId      = null;
     }
 }

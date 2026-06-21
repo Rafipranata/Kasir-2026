@@ -125,5 +125,8 @@ class DatabaseSeeder extends Seeder
                 $produk
             );
         }
+
+        // 5. Seed default settings
+        $this->call(SettingSeeder::class);
     }
 }
