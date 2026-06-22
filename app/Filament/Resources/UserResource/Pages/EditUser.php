@@ -19,4 +19,15 @@ class EditUser extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction()
+                ->label('Simpan'),
+
+            $this->getCancelFormAction()
+                ->label('Batal'),
+        ];
+    }
 }

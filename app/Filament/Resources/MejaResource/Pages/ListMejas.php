@@ -22,7 +22,7 @@ class ListMejas extends ListRecords
                     $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.meja-qr', compact('mejas'));
                     return response()->streamDownload(fn () => print($pdf->output()), 'Semua_QR_Meja.pdf');
                 }),
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Tambah Meja'),
         ];
     }
 }

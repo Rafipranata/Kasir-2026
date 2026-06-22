@@ -57,22 +57,22 @@ class SettingsPage extends Page implements HasForms
         return $form
             ->schema([
                 Section::make('Identitas Aplikasi')
-                    ->description('Ubah nama dan tampilan aplikasi Filament POS.')
+                    ->description('Ubah nama dan tampilan aplikasi.')
                     ->icon('heroicon-o-building-storefront')
                     ->schema([
                         Grid::make(2)->schema([
                             TextInput::make('brand_name')
-                                ->label('Brand Name')
+                                ->label('Nama Brand')
                                 ->placeholder('Contoh: Kasir POS 2026')
                                 ->required()
                                 ->maxLength(100)
                                 ->helperText('Nama ini akan tampil di header, login page, browser title, dan struk kasir.'),
 
                             Select::make('primary_color')
-                                ->label('Primary Color')
+                                ->label('Warna Tema Utama')
                                 ->options(self::colorOptions())
                                 ->required()
-                                ->helperText('Pilih warna utama aplikasi dari palette bawaan Filament / Tailwind.')
+                                ->helperText('Pilih warna utama aplikasi dari palette bawaan.')
                                 ->allowHtml(),
                         ]),
                     ]),

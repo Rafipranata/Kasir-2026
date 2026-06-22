@@ -16,4 +16,7 @@ class ViewOrder extends ViewRecord
             Actions\EditAction::make(),
         ];
     }
+
+    protected static ?string $title = 'Detail Pesanan';
+
 }

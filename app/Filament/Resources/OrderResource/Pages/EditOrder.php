@@ -20,6 +20,20 @@ class EditOrder extends EditRecord
         return $this->getResource()::getUrl('index');
     }
 
+    protected static ?string $title = 'Edit Pesanan';
+
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction()
+                ->label('Simpan'),
+
+            $this->getCancelFormAction()
+                ->label('Batal'),
+        ];
+    }
+
     protected function afterSave(): void
     {
         // Hitung ulang total dari orderItems ketika edit

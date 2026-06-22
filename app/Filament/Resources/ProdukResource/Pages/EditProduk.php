@@ -20,6 +20,16 @@ class EditProduk extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+        protected function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction()
+                ->label('Simpan'),
+
+            $this->getCancelFormAction()
+                ->label('Batal'),
+        ];
+    }
 
     /**
      * Mencegah URL eksternal dimuat ke dalam komponen FileUpload

@@ -251,7 +251,7 @@ class OrderResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()->label('Detail'),
                 Tables\Actions\Action::make('struk')
                     ->label('Struk')
                     ->icon('heroicon-o-receipt-percent')
